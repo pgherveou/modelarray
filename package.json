@@ -1,0 +1,31 @@
+{
+  "name": "modelarray",
+  "author": "PG Herveou",
+  "license": "BSD",
+  "version": "0.0.0",
+  "description": "data models array",
+  "main": "index.js",
+  "bugs": {
+    "url": "https://github.com/pgherveou/modelarray/issues"
+  },
+  "scripts": {
+    "test": "grunt test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/pgherveou/modelarray.git"
+  },
+  "keywords": [
+    "model",
+    "collection",
+    "array"
+  ],
+  "devDependencies": {
+    "grunt": "*",
+    "grunt-shell": "*",
+    "grunt-contrib-jshint": "*",
+    "grunt-contrib-watch": "*",
+    "grunt-contrib-connect": "*",
+    "grunt-contrib-clean": "*"
+  }
+}

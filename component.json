@@ -1,0 +1,18 @@
+{
+  "name": "modelarray",
+  "repo": "pgherveou/modelarray",
+  "description": "data models array",
+  "version": "0.0.1",
+  "keywords": [],
+  "dependencies": {
+    "component/emitter": "*"
+  },
+  "development": {
+    "chaijs/chai": "*"
+  },
+  "license": "MIT",
+  "main": "index.js",
+  "scripts": [
+    "index.js"
+  ]
+}
