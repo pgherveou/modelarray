@@ -4,6 +4,73 @@
 
 var emitter = require('emitter');
 
+/**
+ * ModelArray Constructor
+ * @param {Array} values
+ * @param {[Object]} model item Model constructor
+ * @inherits EventEmitter
+ *
+ * Examples:
+ *     jeremy = new User({id: 1, name: 'jeremy'});
+ *     mehdi = new User({id: 2, name: 'mehdi'});
+ *     pg = new User({id: 3, name: 'pg'});
+ *     thomas = new User({id: 4, name: 'thomas'});
+ *
+ *     // use Users items...
+ *     var users = new modelArray([pg, mehdi, jeremy], User);
+ *
+ *     // or String, Numbers Object or any pojo
+ *     var strs = new ModelArray(['pg', 'mehdi', 'jeremy']);
+ *
+ *     // listen to add event
+ *     users.on('add', function (models) {
+ *        // ...
+ *     });
+ *
+ *     // will cast items, remove duplicate, and trigger a add event..
+ *     models.push(pg, thomas, {id: 5, name: jareen});
+ *
+ *     // will remove event..
+ *     models.remove(jeremy, mehdi);
+ *
+ * @api public
+ */
+
+function ModelArray (values, model) {
+  var arr = [];
+  arr.__proto__ = this;
+  arr._byId = Object.create(null);
+  arr.model = model;
+  arr.silent().push.apply(arr, values);
+  return arr;
+}
+
+/*!
+ * Inherit from Array & mixin with emitter
+ */
+
+ModelArray.prototype = emitter([]);
+
+/*!
+ * expose ModelArray
+ */
+
+module.exports = ModelArray;
+
+/**
+ * Item constructor class
+ *
+ * #### NOTE:
+ * items should expose an id, cid or a toString() method
+ * that can be use as a key to index models in the array
+ *
+ * if your item has a set method, it will be use
+ * to update references when calling arrayItem.set()
+ *
+ * @property model
+ */
+
+ModelArray.prototype.model;
 
 /**
  * cast arguments and create a unique list of values
@@ -13,7 +80,7 @@ var emitter = require('emitter');
  */
 
 function _uniq() {
-  var list = [], ids = {};
+  var list = [], ids = Object.create(null);
 
   [].forEach.call(arguments, function (obj) {
     // ignore item already in array
@@ -34,43 +101,10 @@ function _uniq() {
 }
 
 /**
- * constructor
- */
-
-function ModelArray (values) {
-  var arr = [];
-  arr.__proto__ = this;
-  arr._byId = {};
-  arr.mod = {};
-  arr.silent().push.apply(arr, values);
-  return arr;
-}
-
-/*!
- * Inherit from Array & mixin with emitter
- */
-
-ModelArray.prototype = emitter([]);
-
-/*!
- * expose ModelArray
- */
-
-module.exports = ModelArray;
-
-/**
- * member Model
- *
- * @property model
- */
-
-ModelArray.prototype.model;
-
-/**
  * cast obj to this array model
  *
  * @param  {Object} obj
- * @return {Model}
+ * @return the casted value
  * @api private
  */
 
@@ -111,6 +145,7 @@ ModelArray.prototype.emit = function () {
 /**
  * index models
  *
+ * @param {Object} [args...]
  * @api private
  */
 
@@ -125,6 +160,7 @@ ModelArray.prototype.index = function () {
 /**
  * remove models indexes
  *
+ * @param {Object} [args...]
  * @api private
  */
 
@@ -139,7 +175,7 @@ ModelArray.prototype.unindex = function () {
 /**
  * Get a model from the array.
  *
- * @param {any} value
+ * @param {Object} value an id or model
  * @return {Model}
  * @api public
  */
@@ -150,9 +186,16 @@ ModelArray.prototype.get = function (obj) {
 };
 
 /**
+ * Alias of get
+ */
+
+ModelArray.prototype.id = ModelArray.prototype.get;
+
+/**
  * remove item from the array
- * emit remove event
  *
+ * @param {Object} [args...]
+ * @event remove
  * @api public
  */
 
@@ -180,14 +223,16 @@ ModelArray.prototype.remove = function () {
 /**
  * sync modelArray with specifed models
  *
- * @param {Model|Array} models
+ * @param {Array} models
+ * @event add
+ * @event remove
  * @api public
  */
 
 ModelArray.prototype.set = function (models) {
   var toAdd = [],
       toRemove = [],
-      modelMap = {},
+      ids = Object.create(null),
       silent = !!this._silent,
       id;
 
@@ -201,7 +246,7 @@ ModelArray.prototype.set = function (models) {
       var existing = this.get(model);
       if (existing) {
         id = existing.id || existing.cid || existing.toString();
-        modelMap[id] = true;
+        ids[id] = true;
         if (existing.set) {
           existing.set(model);
         } else {
@@ -217,7 +262,7 @@ ModelArray.prototype.set = function (models) {
   // get models to remove
   this.forEach(function (model) {
     id = model.id || model.cid || model.toString();
-    if (!modelMap[id]) toRemove.push(model);
+    if (!ids[id]) toRemove.push(model);
   });
 
   // remove & add models
@@ -228,19 +273,23 @@ ModelArray.prototype.set = function (models) {
 };
 
 /**
- * reset modelArray
+ * reset items in array
+ *
+ * @param {Array} reinitialize the array with the one specified here
+ * @api public
  */
 
 ModelArray.prototype.reset = function (models) {
   [].splice.call(this, 0, this.length);
+  this._byId = Object.create(null);
   this.silent().push(models);
   this.emit('reset', models, this);
 };
 
 /**
  * Wraps [`Array#push`](https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Array/push)
- * emit add event
  *
+ * @event remove
  * @api public
  */
 
@@ -264,8 +313,8 @@ ModelArray.prototype.push = function () {
 
 /**
  * Wraps [`Array#pop`](https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Array/pop)
- * emit remove event
  *
+ * @event remove
  * @api public
  */
 
@@ -285,8 +334,9 @@ ModelArray.prototype.pop = function () {
 
 /**
  * Wraps [`Array#splice`](https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Array/splice)
- * emit add and remove event
  *
+ * @event remove
+ * @event add
  * @api public
  */
 
@@ -313,8 +363,8 @@ ModelArray.prototype.splice = function () {
 
 /**
  * Wraps [`Array#unshift`](https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Array/unshift)
- * emit add event
  *
+ * @event add
  * @api public
  */
 
@@ -338,8 +388,8 @@ ModelArray.prototype.unshift = function () {
 
 /**
  * Wraps [`Array#shit`](https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Array/shift)
- * emit remove event.
  *
+ * @event remove
  * @api public
  */
 
@@ -359,7 +409,9 @@ ModelArray.prototype.shift = function () {
 
 /**
  * Wraps [`Array#sort`](https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Array/sort)
- * emit sort event.
+ *
+ * @event sort
+ * @api public
  */
 
 ModelArray.prototype.sort = function (fn) {

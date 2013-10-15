@@ -9,10 +9,10 @@ var ModelArray = require('modelarray'),
  * User model
  */
 
-function User(id, name) {
-  this.id = id;
-  this.cid = 'c' + id;
-  this.name = name;
+function User(obj) {
+  this.id = obj.id;
+  this.cid = 'c' + obj.id;
+  this.name = obj.name;
 }
 
 User.prototype.compare = function (u1, u2) {
@@ -34,8 +34,8 @@ User.prototype.set = function (obj) {
  * Users collection
  */
 
-function Users() {
-  return ModelArray.apply(this, arguments);
+function Users(values) {
+  return ModelArray.call(this, values, User);
 }
 
 /*!
@@ -43,7 +43,6 @@ function Users() {
  */
 
 Users.prototype.__proto__ = ModelArray.prototype;
-Users.prototype.model = User;
 
 /*!
  * scenarios
@@ -54,11 +53,11 @@ var scenarios = [
     name: 'array of User',
     init: function () {
       compare = null;
-      jeremy = new User(1, 'jeremy');
-      mehdi = new User(2, 'mehdi');
-      pg = new User(3, 'pg');
+      jeremy = new User({id: 1, name: 'jeremy'});
+      mehdi = new User({id: 2, name: 'mehdi'});
+      pg = new User({id: 3, name: 'pg'});
       thomas = new User(4, 'thomas');
-      pg2 = new User(3, 'Pierre-Guillaume');
+      pg2 = new User({id: 3, name: 'Pierre-Guillaume'});
       users = new Users([pg, mehdi, jeremy]);
     }
   },
@@ -92,10 +91,27 @@ var scenarios = [
   {
     name: 'array of Integer',
     init: function () {
+      compare = null;
       pg = pg2 = 3;
       mehdi = 2;
       jeremy = 1;
       thomas = 4;
+      users = new ModelArray([pg, mehdi, jeremy]);
+    }
+  },
+  {
+    name: 'array of Date',
+    init: function () {
+      compare = function (d1, d2) {
+        if (d1 < d2) return -1;
+        if (d1 > d2) return 1;
+        return 0;
+      };
+
+      pg = pg2 = new Date('2012-01-01');
+      mehdi = new Date('2011-01-01');
+      jeremy = new Date('2010-01-01');
+      thomas = new Date('2013-01-01');
       users = new ModelArray([pg, mehdi, jeremy]);
     }
   }
