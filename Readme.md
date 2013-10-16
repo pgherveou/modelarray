@@ -15,6 +15,10 @@
 
     $ component install pgherveou/modelarray
 
+  Install with npm
+
+    $ npm install modelarray
+
 ## License
 
   MIT

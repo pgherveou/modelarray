@@ -1,15 +1,14 @@
 {
   "name": "modelarray",
+  "description": "data models array",
+  "version": "0.0.1",
   "author": "PG Herveou",
   "license": "BSD",
-  "version": "0.0.0",
-  "description": "data models array",
-  "main": "index.js",
   "bugs": {
     "url": "https://github.com/pgherveou/modelarray/issues"
   },
   "scripts": {
-    "test": "grunt test"
+    "test": "make test"
   },
   "repository": {
     "type": "git",
@@ -20,7 +19,12 @@
     "collection",
     "array"
   ],
+  "dependencies": {
+    "emitter": "http://github.com/component/emitter/archive/1.0.1.tar.gz"
+  },
   "devDependencies": {
+    "mocha": "*",
+    "chai": "*",
     "grunt": "*",
     "grunt-shell": "*",
     "grunt-contrib-jshint": "*",

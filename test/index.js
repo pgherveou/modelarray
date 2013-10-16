@@ -1,6 +1,6 @@
 /*global describe:true,beforeEach:true,afterEach:true,it:true*/
 
-var ModelArray = require('modelarray'),
+var ModelArray = require(this.window ? 'modelarray' : '..'),
     chai = require('chai'),
     expect = chai.expect,
     compare, users, pg, pg2, mehdi, jeremy, thomas, emit;
