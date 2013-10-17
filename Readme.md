@@ -31,8 +31,8 @@
  // remove some items
  models.remove(jeremy, mehdi);
 
- users.on('add', function (models) { // do something on add});
- users.on('remove', function (models) { // do something on remove});
+ users.on('add', function (models) { /* do something on add */});
+ users.on('remove', function (models) { /* do something on remove */});
 
 ```
 
@@ -42,7 +42,7 @@
 
     $ component install pgherveou/modelarray
 
-  Install with npm
+  Install with [npm(2)](http://npmjs.org):
 
     $ npm install modelarray
 
