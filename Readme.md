@@ -19,7 +19,7 @@
  // use Users items...
  var users = new modelArray([pg, mehdi, jeremy], User);
 
- // or pojo (note: obj needs to expose an id property)
+ // or pojo
  var objs = new ModelArray([{id: 1, name: 'pg'}, {id: 2, name: 'pg'}]);
 
  // or String (or Numbers, or anything else...)
