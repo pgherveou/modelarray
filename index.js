@@ -39,9 +39,15 @@ var emitter = require('emitter');
 function ModelArray (values, model) {
   var arr = [];
   arr.__proto__ = this;
-  arr._byId = Object.create(null);
-  arr.model = model;
-  arr.silent().push.apply(arr, values);
+  Object.defineProperty(this, '_silent', {});
+  Object.defineProperty(this, '_callbacks', {value: Object.create(null)});
+  Object.defineProperty(this, '_byId', {value: Object.create(null)});
+  Object.defineProperty(this, 'model', {value: model});
+  if (values && Array.isArray(values)) {
+    arr.silent().push.apply(arr, values);
+  } else if (values) {
+    arr.silent().push.call(arr, values);
+  }
   return arr;
 }
 
@@ -94,7 +100,7 @@ function _uniq() {
     if (ids[id]) return;
 
     list.push(model);
-    ids[id] = true;
+    if ('object' !== typeof id) ids[id] = true;
   }, this);
 
   return list;
@@ -150,10 +156,13 @@ ModelArray.prototype.emit = function () {
  */
 
 ModelArray.prototype.index = function () {
+  var value;
   [].forEach.call(arguments, function (m) {
     if (m.id) this._byId[m.id] = m;
     if (m.cid) this._byId[m.cid] = m;
-    if (!m.id && !m.cid) this._byId[m.toString()] = m;
+    if (!m.id && !m.cid && ('object' !== typeof (value = m.valueOf()))) {
+      this._byId[value] = m;
+    }
   }, this);
 };
 
@@ -168,7 +177,7 @@ ModelArray.prototype.unindex = function () {
   [].forEach.call(arguments, function (m) {
     if (m.id) delete this._byId[m.id];
     if (m.cid) delete this._byId[m.cid];
-    if (!m.id && !m.cid) delete this._byId[m.toString()];
+    if (!m.id && !m.cid) delete this._byId[m.valueOf()];
   }, this);
 };
 
@@ -182,7 +191,7 @@ ModelArray.prototype.unindex = function () {
 
 ModelArray.prototype.get = function (obj) {
   if (!obj) return;
-  return this._byId[obj.id] || this._byId[obj.cid] || this._byId[obj];
+  return this._byId[obj.id] || this._byId[obj.cid] || this._byId[obj.valueOf()];
 };
 
 /**

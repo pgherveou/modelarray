@@ -22,7 +22,7 @@
  // or pojo (note: obj needs to expose an id property)
  var objs = new ModelArray([{id: 1, name: 'pg'}, {id: 2, name: 'pg'}]);
 
- // or String, Numbers Object or any pojo
+ // or String (or Numbers, or anything else...)
  var strs = new ModelArray(['pg', 'mehdi', 'jeremy']);
 
  // push will cast items, remove duplicate
