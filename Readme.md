@@ -2,18 +2,18 @@
 
   simple wrapper for your arrays with the following features:
 
-  - behave just like an array (ie ` Array.isArray(myModelArray) === true`)
-  - ensure unicity of items in the set
-  - emit add /remove / reset / sort events
+  * behave just like an array (ie ` Array.isArray(myModelArray) === true`)
+  * ensure unicity of items in the set
+  * emit add /remove / reset / sort events
 
   the rest is up to you!
 
 
 ## Example
 ```js
- var jeremy = new User({id: 1, name: 'jeremy'});
-     mehdi = new User({id: 2, name: 'mehdi'});
-     pg = new User({id: 3, name: 'pg'});
+ var jeremy = new User({id: 1, name: 'jeremy'}),
+     mehdi = new User({id: 2, name: 'mehdi'}),
+     pg = new User({id: 3, name: 'pg'}),
      thomas = new User({id: 4, name: 'thomas'});
 
  // use Users items...
