@@ -1,10 +1,10 @@
 # modelarray
 
   simple wrapper for your arrays with the following features:
-
+  
   * behave just like an array (ie ` Array.isArray(myModelArray) === true`)
-  * ensure unicity of items in the set
   * emit add /remove / reset / sort events
+  * ensure unicity of items in the set
 
   the rest is up to you!
 
