@@ -1,10 +1,10 @@
 # modelarray
 
-  simple wrapper for your arrays with the following features:
-
+  simple arrays of models with the following features:
+  
   * behave just like an array (ie ` Array.isArray(myModelArray) === true`)
-  * ensure unicity of items in the set
   * emit add /remove / reset / sort events
+  * ensure unicity of items
 
   the rest is up to you!
 
@@ -19,7 +19,7 @@
  // use Users items...
  var users = new modelArray([pg, mehdi, jeremy], User);
 
- // or pojo (note: obj needs to expose an id property)
+ // or pojo
  var objs = new ModelArray([{id: 1, name: 'pg'}, {id: 2, name: 'pg'}]);
 
  // or String (or Numbers, or anything else...)
