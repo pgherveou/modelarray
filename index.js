@@ -66,10 +66,6 @@ module.exports = ModelArray;
 /**
  * Item constructor class
  *
- * #### NOTE:
- * items should expose an id, cid or a toString() method
- * that can be use as a key to index models in the array
- *
  * if your item has a set method, it will be use
  * to update references when calling arrayItem.set()
  *
@@ -191,7 +187,9 @@ ModelArray.prototype.unindex = function () {
 
 ModelArray.prototype.get = function (obj) {
   if (!obj) return;
-  return this._byId[obj.id] || this._byId[obj.cid] || this._byId[obj.valueOf()];
+  var id = obj.id || obj.cid || obj.valueOf();
+  if (id && 'object' !== typeof(id)) return this._byId[id];
+  return this[this.indexOf(id)];
 };
 
 /**
@@ -241,7 +239,7 @@ ModelArray.prototype.remove = function () {
 ModelArray.prototype.set = function (models) {
   var toAdd = [],
       toRemove = [],
-      ids = Object.create(null),
+      ids = [],
       silent = !!this._silent,
       id;
 
@@ -254,8 +252,7 @@ ModelArray.prototype.set = function (models) {
     .forEach(function (model) {
       var existing = this.get(model);
       if (existing) {
-        id = existing.id || existing.cid || existing.toString();
-        ids[id] = true;
+        ids.push(existing.id || existing.cid || existing.valueOf());
         if (existing.set) {
           existing.set(model);
         } else {
@@ -270,8 +267,8 @@ ModelArray.prototype.set = function (models) {
 
   // get models to remove
   this.forEach(function (model) {
-    id = model.id || model.cid || model.toString();
-    if (!ids[id]) toRemove.push(model);
+    id = model.id || model.cid || model.valueOf();
+    if (ids.indexOf(id) === -1) toRemove.push(model);
   });
 
   // remove & add models

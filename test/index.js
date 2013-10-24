@@ -78,6 +78,21 @@ var scenarios = [
     }
   },
   {
+    name: 'array of Object (no id)',
+    init: function () {
+      compare = function (o1, o2) {
+        if (o1.name < o2.name) return -1;
+        if (o1.name > o2.name) return 1;
+        return 0;
+      };
+      jeremy = {name: 'jeremy'};
+      mehdi = {name: 'mehdi'};
+      pg = pg2 = {name: 'pg'};
+      thomas = {name: 'thomas'};
+      users = new ModelArray([pg, mehdi, jeremy]);
+    }
+  },
+  {
     name: 'array of String',
     init: function () {
       compare = null;
@@ -89,7 +104,7 @@ var scenarios = [
     }
   },
   {
-    name: 'array of Integer',
+    name: 'array of Number',
     init: function () {
       compare = null;
       pg = pg2 = 3;
