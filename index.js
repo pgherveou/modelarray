@@ -426,3 +426,15 @@ ModelArray.prototype.sort = function (fn) {
   this.emit('sort', this);
   return ret;
 };
+
+/**
+ * Create JSON representation of this array
+ *
+ * @api public
+ */
+
+ModelArray.prototype.toJSON = function () {
+  return this.map(function (model) {
+    return model.toJSON ? model.toJSON() : model;
+  });
+};

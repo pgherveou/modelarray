@@ -3,7 +3,7 @@
 var ModelArray = require(this.window ? 'modelarray' : '..'),
     chai = require('chai'),
     expect = chai.expect,
-    compare, users, pg, pg2, mehdi, jeremy, thomas, emit;
+    compare, json, users, pg, pg2, mehdi, jeremy, thomas, emit;
 
 /**
  * User model
@@ -28,6 +28,13 @@ User.prototype.toString = function () {
 User.prototype.set = function (obj) {
   this.name = obj.name;
   for (var ppty in obj) this[ppty] = obj[ppty];
+};
+
+User.prototype.toJSON = function () {
+  return {
+    id: this.id,
+    name: this.name
+  };
 };
 
 /**
@@ -59,6 +66,7 @@ var scenarios = [
       thomas = new User(4, 'thomas');
       pg2 = new User({id: 3, name: 'Pierre-Guillaume'});
       users = new Users([pg, mehdi, jeremy]);
+      json = [pg.toJSON(), mehdi.toJSON(), jeremy.toJSON()];
     }
   },
   {
@@ -75,6 +83,7 @@ var scenarios = [
       thomas = {id: 4, name: 'thomas'};
       pg2 = {id: 3, name: 'Pierre-Guillaume'};
       users = new ModelArray([pg, mehdi, jeremy]);
+      json = [pg, mehdi, jeremy];
     }
   },
   {
@@ -90,6 +99,7 @@ var scenarios = [
       pg = pg2 = {name: 'pg'};
       thomas = {name: 'thomas'};
       users = new ModelArray([pg, mehdi, jeremy]);
+      json = [pg, mehdi, jeremy];
     }
   },
   {
@@ -101,6 +111,7 @@ var scenarios = [
       jeremy = 'jeremy';
       thomas = 'thomas';
       users = new ModelArray([pg, mehdi, jeremy]);
+      json = [pg, mehdi, jeremy];
     }
   },
   {
@@ -112,6 +123,7 @@ var scenarios = [
       jeremy = 1;
       thomas = 4;
       users = new ModelArray([pg, mehdi, jeremy]);
+      json = [pg, mehdi, jeremy];
     }
   },
   {
@@ -128,6 +140,7 @@ var scenarios = [
       jeremy = new Date('2010-01-01');
       thomas = new Date('2013-01-01');
       users = new ModelArray([pg, mehdi, jeremy]);
+      json = [pg.toJSON(), mehdi.toJSON(), jeremy.toJSON()];
     }
   }
 ];
@@ -264,6 +277,11 @@ scenarios.forEach(function (scenario) {
       expect(users.slice()).to.deep.eq([jeremy, mehdi, pg]);
       expect(emit).to.eq(1);
     });
+
+    it('should convert to JSON', function () {
+      expect(users.toJSON()).to.deep.eq(json);
+    });
+
   });
 });
 
