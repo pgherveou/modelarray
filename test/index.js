@@ -225,6 +225,26 @@ scenarios.forEach(function (scenario) {
       expect(emit).to.eq(1);
     });
 
+    it('should add an array of items', function () {
+      users.on('add', function (models) {
+        expect(models).to.have.length(1);
+        expect(models[0]).to.eq(thomas);
+        emit++;
+      }).add([thomas, pg]);
+      expect(users).to.have.length(4);
+      expect(emit).to.eq(1);
+    });
+
+    it('should add single item', function () {
+      users.on('add', function (models) {
+        expect(models).to.have.length(1);
+        expect(models[0]).to.eq(thomas);
+        emit++;
+      }).add(thomas);
+      expect(users).to.have.length(4);
+      expect(emit).to.eq(1);
+    });
+
     it('should pop', function () {
       users.on('remove', function (model) {
         expect(model).to.eq(jeremy);

@@ -295,7 +295,7 @@ ModelArray.prototype.reset = function (models) {
 /**
  * Wraps [`Array#push`](https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Array/push)
  *
- * @event remove
+ * @event add
  * @api public
  */
 
@@ -315,6 +315,21 @@ ModelArray.prototype.push = function () {
   }
 
   return ret;
+};
+
+/**
+ * add an array of item at the end of the array
+ *
+ * @event add
+ * @api public
+ */
+
+ModelArray.prototype.add = function (items) {
+  if (Array.isArray(items)) {
+    this.push.apply(this, items);
+  } else {
+    this.push(items);
+  }
 };
 
 /**
