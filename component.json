@@ -2,7 +2,7 @@
   "name": "modelarray",
   "repo": "pgherveou/modelarray",
   "description": "data models array",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "keywords": [],
   "dependencies": {
     "component/emitter": "*"
