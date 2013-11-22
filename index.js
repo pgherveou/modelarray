@@ -86,6 +86,7 @@ function _uniq() {
 
   [].forEach.call(arguments, function (obj) {
     // ignore item already in array
+    if (!obj) return;
     if (this.get(obj)) return;
 
     // cast object
@@ -288,7 +289,7 @@ ModelArray.prototype.set = function (models) {
 ModelArray.prototype.reset = function (models) {
   [].splice.call(this, 0, this.length);
   this._byId = Object.create(null);
-  this.silent().push(models);
+  if (models) this.silent().push(models);
   this.emit('reset', models, this);
 };
 
