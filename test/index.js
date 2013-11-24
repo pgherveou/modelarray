@@ -213,6 +213,7 @@ scenarios.forEach(function (scenario) {
         })
         .reset([thomas]);
       expect(users).to.have.length(1);
+      expect(users[0]).to.eq(thomas);
     });
 
     it('should push', function () {

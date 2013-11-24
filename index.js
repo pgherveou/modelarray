@@ -289,7 +289,7 @@ ModelArray.prototype.set = function (models) {
 ModelArray.prototype.reset = function (models) {
   [].splice.call(this, 0, this.length);
   this._byId = Object.create(null);
-  if (models) this.silent().push(models);
+  if (models) this.silent().push.apply(this, models);
   this.emit('reset', models, this);
 };
 
