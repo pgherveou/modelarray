@@ -206,14 +206,18 @@ scenarios.forEach(function (scenario) {
     });
 
     it('should reset', function () {
-      users
-        .on('reset', function (models) {
-          expect(models).to.have.length(1);
-          expect(models[0]).to.eq(thomas);
-        })
-        .reset([thomas]);
+      var emit = 0;
+      users.on('reset', function () { emit++; });
+      users.reset([thomas]);
+      expect(emit).to.eq(1);
       expect(users).to.have.length(1);
       expect(users[0]).to.eq(thomas);
+      expect(Object.keys(users._byId)).to.have.length.lte(1);
+      users.reset();
+      expect(emit).to.eq(2);
+      expect(users).to.have.length(0);
+      expect(Object.keys(users._byId)).to.have.length(0);
+
     });
 
     it('should push', function () {

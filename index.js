@@ -39,10 +39,26 @@ var emitter = require('emitter');
 function ModelArray (values, model) {
   var arr = [];
   arr.__proto__ = this;
-  Object.defineProperty(this, '_silent', {});
-  Object.defineProperty(this, '_callbacks', {value: Object.create(null)});
-  Object.defineProperty(this, '_byId', {value: Object.create(null)});
-  Object.defineProperty(this, 'model', {value: model});
+
+  Object.defineProperty(this, '_silent', {
+    value: false,
+    writable: true
+  });
+
+  Object.defineProperty(this, '_callbacks', {
+    value: Object.create(null),
+    writable: true
+  });
+
+  Object.defineProperty(this, 'model', {
+    value: model
+  });
+
+  Object.defineProperty(this, '_byId', {
+    value: Object.create(null),
+    writable: true
+  });
+
   if (values && Array.isArray(values)) {
     arr.silent().push.apply(arr, values);
   } else if (values) {
