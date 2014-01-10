@@ -90,6 +90,20 @@ module.exports = ModelArray;
 
 ModelArray.prototype.model;
 
+// default id attributes
+ModelArray.idAttributes = ['id', '_id', 'cid'];
+
+function getId(obj) {
+  if (!obj) return;
+
+  var arr = ModelArray.idAttributes,
+      len = arr.length;
+
+  for (var i = 0; i < len; i++) {
+    if (obj[arr[i]]) return obj[arr[i]];
+  }
+}
+
 /**
  * cast arguments and create a unique list of values
  * that are not already in this array
@@ -101,13 +115,14 @@ function _uniq() {
   var list = [], ids = Object.create(null);
 
   [].forEach.call(arguments, function (obj) {
+
     // ignore item already in array
     if (!obj) return;
     if (this.get(obj)) return;
 
     // cast object
     var model = this._cast(obj),
-        id = model.id || model.cid || model;
+        id = getId(model) || model;
 
     // make sure we don't add it twice
     if (ids[id]) return;
@@ -169,11 +184,19 @@ ModelArray.prototype.emit = function () {
  */
 
 ModelArray.prototype.index = function () {
-  var value;
+
   [].forEach.call(arguments, function (m) {
-    if (m.id) this._byId[m.id] = m;
-    if (m.cid) this._byId[m.cid] = m;
-    if (!m.id && !m.cid && ('object' !== typeof (value = m.valueOf()))) {
+    var index = false,
+        value;
+
+    ModelArray.idAttributes.forEach(function (idAttribute) {
+      if (m[idAttribute]) {
+        this._byId[m[idAttribute]] = m;
+        index = true;
+      }
+    }, this);
+
+    if (!index && ('object' !== typeof (value = m.valueOf()))) {
       this._byId[value] = m;
     }
   }, this);
@@ -188,9 +211,20 @@ ModelArray.prototype.index = function () {
 
 ModelArray.prototype.unindex = function () {
   [].forEach.call(arguments, function (m) {
-    if (m.id) delete this._byId[m.id];
-    if (m.cid) delete this._byId[m.cid];
-    if (!m.id && !m.cid) delete this._byId[m.valueOf()];
+    var index = false,
+        value;
+
+    ModelArray.idAttributes.forEach(function (idAttribute) {
+      if (m[idAttribute]) {
+        delete this._byId[m[idAttribute]];
+        index = true;
+      }
+    }, this);
+
+    if (!index && ('object' !== typeof (value = m.valueOf()))) {
+      delete this._byId[value];
+    }
+
   }, this);
 };
 
@@ -204,7 +238,7 @@ ModelArray.prototype.unindex = function () {
 
 ModelArray.prototype.get = function (obj) {
   if (!obj) return;
-  var id = obj.id || obj.cid || obj.valueOf();
+  var id = getId(obj) || obj.valueOf();
   if (id && 'object' !== typeof(id)) return this._byId[id];
   return this[this.indexOf(id)];
 };
@@ -269,7 +303,7 @@ ModelArray.prototype.set = function (models) {
     .forEach(function (model) {
       var existing = this.get(model);
       if (existing) {
-        ids.push(existing.id || existing.cid || existing.valueOf());
+        ids.push(getId(existing) || existing.valueOf());
         if (existing.set) {
           existing.set(model);
         } else {
