@@ -112,23 +112,15 @@ function getId(obj) {
  */
 
 function _uniq() {
-  var list = [], ids = Object.create(null);
-
+  var list = [];
   [].forEach.call(arguments, function (obj) {
+    if (!obj) return;
+    var model = this._cast(obj);
 
     // ignore item already in array
-    if (!obj) return;
-    if (this.get(obj)) return;
+    if (this.get(model)) return;
 
-    // cast object
-    var model = this._cast(obj),
-        id = getId(model) || model;
-
-    // make sure we don't add it twice
-    if (ids[id]) return;
-
-    list.push(model);
-    if ('object' !== typeof id) ids[id] = true;
+    if (list.indexOf(model) === -1) list.push(model);
   }, this);
 
   return list;
