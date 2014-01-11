@@ -238,9 +238,18 @@ ModelArray.prototype.unindex = function () {
 
 ModelArray.prototype.get = function (obj) {
   if (!obj) return;
-  var id = getId(obj) || obj.valueOf();
-  if (id && 'object' !== typeof(id)) return this._byId[id];
-  return this[this.indexOf(id)];
+  var ids = ModelArray.idAttributes,
+      len = ids.length,
+      id;
+
+  for (var i = 0; i < len; i++) {
+    id = obj[ids[i]];
+    if (id && this._byId[id]) return this._byId[id];
+  }
+
+  id = obj.valueOf();
+  if (this._byId[id]) return this._byId[id];
+  return this[this.indexOf(obj)];
 };
 
 /**
